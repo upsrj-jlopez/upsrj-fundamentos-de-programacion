@@ -8,7 +8,7 @@
             "args": [
                 "clean",
                 "all",
-                "run-save"
+                "run"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/src"
