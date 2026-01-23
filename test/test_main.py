@@ -54,16 +54,12 @@ def test_log_exists_and_content():
     print(f"{GREEN}Log file OK{RESET}")
     print(f"{BLUE}Log content:\n{content}{RESET}")
 
-def test_code_functionality(test_input: int, iteration: int, expected: list):
+def test_code_functionality(test_input: int, iteration: int, expected: str):
     """Black-box test: checks that expected result strings appear in output"""
     print(f">>> Testing program functionality (black-box) — case {iteration}")
 
-    expected_area = expected[0]
-    expected_volume = expected[1]
-
     expected_output = (
-        f"Area del cuadrado: {expected_area}\n"
-        f"Volumen del cubo: {expected_volume}\n"
+        f"El numero es {expected}\n"
     )
 
     code, out, err = run_cmd(BIN_PATH, input_data=f"{test_input}\n")
@@ -83,12 +79,12 @@ def test_code_functionality(test_input: int, iteration: int, expected: list):
 if __name__ == "__main__":
     try:
         testcases = {
-            1:  [1, 1],
-            3:  [9, 27],
-            6:  [36, 216],
-            0:  [0, 0],
-            -2: [4, -8],
-            -5: [25, -125]
+            1:  "par",
+            3:  "impar",
+            6:  "par",
+            0:  "par",
+            -2: "par",
+            -5: "impar"
         }
         test_make()
         test_binary_exists()
