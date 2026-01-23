@@ -1,29 +1,28 @@
-# Área y Volumen de un Cuadrado
+# Determinar si un número es par
 
 ## Objetivos
 
-* Calcular el área de un cuadrado dado el valor de la longitud de su lado.
-* Calcular el volumen de un cubo dado el valor de la longitud de su lado.
+Desarrollar un programa en lenguaje C que determine si un número entero ingresado por el usuario es par o impar, haciendo uso de una función definida por el alumno.
 
-Este ejercicio ayuda a practicar:
+## Descripción del problema
 
-* Entrada y salida estándar en C (`scanf`, `printf`).
-* Variables y operaciones aritméticas.
-* Organización básica de un programa.
+Se debe crear un programa en C que lea un número entero desde la entrada estándar y determine si dicho número es par.
 
 ---
 
 ## Instrucciones
 
-1. Crea un archivo llamado `main.c` en la carpeta del ejercicio.
+Tu programa debe cumplir con todas las siguientes especificaciones:
 
-2. Escribe un programa en C que:
-
-* Pida al usuario la longitud del lado en formato `int`.
-* Calcule el área del cuadrado en una función `get_area` y reciba como parámetro de entrada un `int`.
-* Calcule el volumen del cubo en una función `get_volume` y reciba como parámetro de entrada un `int`.
-
-* Imprima ambos resultados en pantalla.
+1. Debes declarar una función llamada `is_even`.
+2. La función `is_even` debe devolver un valor de tipo `int`.
+3. La función `is_even` debe recibir un parámetro de tipo `int`.
+4. La función `is_even` debe devolver:
+    * `1` si el número recibido es par
+    * `0` si el número recibido no es par
+5. Debes modificar la función main para que:
+    * Invoque la función `is_even`
+    * Lea el número ingresado por el usuario desde la entrada estándar
 
 ---
 
@@ -35,17 +34,14 @@ Este ejercicio ayuda a practicar:
 
 ## Ejemplo de uso
 
-### Entrada
+```
+Ingrese un numero: 6
+El numero es par
+```
 
 ```
-Introduzca la longitud del lado: 5
-```
-
-### Salida
-
-```
-Area del cuadrado: 25
-Volumen del cubo: 125
+Ingrese un numero: 5
+El numero es impar
 ```
 
 ---
@@ -57,29 +53,6 @@ Usa las macros de Visual Studio Code.
 ```
 CTRL + SHIFT + B
 ```
-
----
-
-## Diagrama simple
-
-Cuadrado (2D)              Cubo (3D)
-
-```
-+---------+              +---------+
-|         |             /         /|
-|         |            +---------+ |
-|         |            |         | +
-+---------+            |         |/
-                       +---------+
-```
-
----
-
-## Preguntas de reflexión
-
-1. ¿Qué sucede si el usuario introduce un número decimal en lugar de un número entero?
-2. ¿Cómo debería comportarse el programa si la longitud del lado es negativa?
-3. ¿Por qué `float` o `double` podrían ser más útiles que `int` para este programa?
 
 ---
 
