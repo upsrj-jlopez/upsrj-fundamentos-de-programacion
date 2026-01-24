@@ -54,12 +54,12 @@ def test_log_exists_and_content():
     print(f"{GREEN}Log file OK{RESET}")
     print(f"{BLUE}Log content:\n{content}{RESET}")
 
-def test_code_functionality(test_input: int, iteration: int, expected: str):
+def test_code_functionality(test_input: str, iteration: int, expected: str):
     """Black-box test: checks that expected result strings appear in output"""
     print(f">>> Testing program functionality (black-box) — case {iteration}")
 
     expected_output = (
-        f"El numero es {expected}\n"
+        f"{test_input} -> {expected}\n"
     )
 
     code, out, err = run_cmd(BIN_PATH, input_data=f"{test_input}\n")
@@ -79,17 +79,17 @@ def test_code_functionality(test_input: int, iteration: int, expected: str):
 if __name__ == "__main__":
     try:
         testcases = {
-            1:  "par",
-            3:  "impar",
-            6:  "par",
-            0:  "par",
-            -2: "par",
-            -5: "impar"
+            '?': 'A',
+            '+': 'U',
+            '-': 'S',
+            '&': 'X',
+            'X': '&',
+            '8': 'F'
         }
         test_make()
         test_binary_exists()
-        for i, (side, expected) in enumerate(testcases.items()):
-            test_code_functionality(side, i, expected)
+        for i, (char, expected) in enumerate(testcases.items()):
+            test_code_functionality(char, i, expected)
         print(f"\n{GREEN}All tests passed{RESET}")
     except AssertionError as e:
         print(f"{RED}Test failed: {e}{RESET}")
