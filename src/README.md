@@ -1,76 +1,110 @@
-# Cifrador de Bits
+# Sistema de Acceso
 
 ## Objetivo
 
-El objetivo de este ejercicio es aplicar una secuencia de operaciones a nivel de bits sobre un carácter secreto. Si implementas correctamente las funciones, podrás "descifrar" el carácter secreto.
+El objetivo de este ejercicio es reforzar el uso de **estructuras de control repetitivas** y el **manejo básico de cadenas de caracteres en lenguaje C**, mediante la simulación de un sistema simple de inicio de sesión.
 
 Este ejercicio cubre:
 
-* Funciones que retornan valores (`int`) y programación modular básica
-* Operaciones bit a bit: desplazamiento a la izquierda (`<<`), desplazamiento a la derecha (`>>`), NOT (`~`), XOR (`^`)
-* Variables locales para almacenar bits (MSB/LSB)
-* Macros
-* Expresiones booleanas simples para validación
+* Uso de ciclos `for`, `while` y `do/while`
+* Uso de las palabras clave `break` y `continue`
+* Manejo básico de cadenas de caracteres (`char`)
+* Validación de entrada del usuario
+* Control de flujo en programas secuenciales
+* Comparación de caracteres usando rangos ASCII
+
+---
 
 ## Instrucciones
 
-1. Se te da un carácter secreto `?` (código ASCII 63).
+1. El programa debe solicitar al usuario un **nombre de usuario**.
 
-2. Debes aplicar los siguientes pasos **dentro de las funciones del programa**:
+2. El nombre de usuario debe cumplir las siguientes condiciones:
+   * Tener una longitud mínima de **5 caracteres**
+   * No estar vacío
 
-   1. Desplazamiento circular a la izquierda
-   2. Inversión de bits
-   3. Desplazamiento circular a la derecha
-   4. XOR con la máscara `129` (decimal) para obtener el carácter final
+3. La validación del nombre de usuario debe realizarse usando un ciclo `do/while`.
 
-3. Implementa las funciones:
+4. Una vez ingresado un nombre de usuario válido, el programa debe:
+   * Recorrer el nombre carácter por carácter usando un ciclo `for`
+   * Contar cuántos caracteres **no son espacios**
+   * Usar la palabra clave `continue` para ignorar los espacios
 
-   * `ShiftLeftCircular(int value)`
-   * `InvertBits(int value)`
-   * `ShiftRightCircular(int value)`
-   * `ApplyMask(int value)`
-   * `EncryptValue(int value)`
+5. Posteriormente, el sistema debe solicitar una **contraseña**, considerando:
+   * Máximo **3 intentos**
+   * El control de intentos debe realizarse con un ciclo `while`
 
-4. Modifica la función `main()` para que solicite al usuario un carácter de entrada y use ese valor como carácter secreto a procesar.
+6. Antes de validar la contraseña, el programa debe:
+   * Recorrer la contraseña con un ciclo `for`
+   * Verificar que contenga **al menos un número**
+   * Si no contiene números, el intento se considera fallido
 
-5. Al ejecutar correctamente tu programa, el carácter secreto `?` se transformará en el carácter final esperado.
+7. Si la contraseña ingresada coincide con la contraseña correcta:
+   * Mostrar el mensaje `"Access granted."`
+   * Salir inmediatamente del ciclo usando `break`
+
+8. Si se alcanzan los 3 intentos fallidos:
+   * Mostrar el mensaje `"Account locked."`
+
+---
 
 ## Ejemplo
 
 Entrada esperada del programa:
 
 ```
-Ingrese el caracter a encriptar: ?
+
+Enter username (minimum 5 characters): student01
+Enter password: admin123
+
 ```
 
 Salida esperada del programa:
 
 ```
-? -> A
+
+Username has 9 non-space characters.
+Access granted.
+
 ```
 
-Carácter secreto inicial: `?`
+Ejemplo de intento fallido:
 
-Carácter esperado al final después de ejecutar el programa: `A`
+```
 
-Si tus funciones son correctas, el programa transformará `?` en `A`.
+Enter password: test
+Password must contain at least one number.
+Enter password: 123
+Incorrect password.
+Enter password: pass1
+Incorrect password.
+Account locked.
+
+```
+
+---
 
 ## Notas
 
-* Trabaja solo con tipos `int`.
-* No uses arreglos, cadenas de texto ni punteros.
-* Utiliza únicamente las operaciones descritas.
-* Los pasos son una guía; las manipulaciones a nivel de bits transformarán `?` en `A`.
+* Todo el programa debe implementarse **dentro de la función `main`**.
+* No se permite el uso de funciones definidas por el usuario.
+* No se permite el uso de punteros explícitos.
+* El uso de arreglos está limitado únicamente al almacenamiento de las cadenas de entrada.
+* No se deben utilizar estructuras, memoria dinámica ni librerías avanzadas.
+* El objetivo es reforzar **control de flujo**, no seguridad real.
+
+---
 
 ## Metas de Aprendizaje
 
-* Entender y manipular bits individuales en un número.
-* Practicar el uso de funciones y retorno de valores.
-* Aprender el efecto de las operaciones bit a bit sobre caracteres.
-* Seguir una secuencia clara de operaciones para obtener un resultado específico.
+* Comprender cuándo y por qué usar `for`, `while` y `do/while`.
+* Aplicar correctamente `break` para salir de un ciclo.
+* Aplicar correctamente `continue` para saltar iteraciones.
+* Manipular cadenas de caracteres básicas en C.
+* Analizar y validar datos ingresados por el usuario.
+* Desarrollar programas con flujo lógico claro y legible.
 
-Al completar el ejercicio, deberías ser capaz de explicar cómo cada paso modifica los bits y por qué el carácter final es `A`.
-
+Al finalizar el ejercicio, el estudiante debe ser capaz de **explicar el comportamiento de cada ciclo** y **justificar el uso de `break` y `continue`** dentro del programa.
 
 ---
 
@@ -85,10 +119,12 @@ Al completar el ejercicio, deberías ser capaz de explicar cómo cada paso modif
 Usa las macros de Visual Studio Code.
 
 ```
+
 CTRL + SHIFT + B
+
 ```
 
 ---
 
-**Autor:** Jesús Salvador López Ortega
+**Autor:** Jesús Salvador López Ortega  
 [LinkedIn](https://www.linkedin.com/in/jesus-salvador-lopez-ortega/) | [GitHub](https://github.com/chucholoport) | [Correo Institucional](mailto:jlopez@upsrj.edu.mx)

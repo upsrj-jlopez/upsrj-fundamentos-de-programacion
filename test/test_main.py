@@ -54,23 +54,22 @@ def test_log_exists_and_content():
     print(f"{GREEN}Log file OK{RESET}")
     print(f"{BLUE}Log content:\n{content}{RESET}")
 
-def test_code_functionality(test_input: str, iteration: int, expected: str):
-    """Black-box test: checks that expected result strings appear in output"""
-    print(f">>> Testing program functionality (black-box) — case {iteration}")
+def test_code_functionality(username: str, passwords: list, iteration: int, expected: str):
+    """Black-box test: simulate interactive input (username + password attempts)."""
+    print(f">>> Testing program functionality — case {iteration}")
 
-    expected_output = (
-        f"{test_input} -> {expected}\n"
-    )
+    # Construimos la entrada: username + cada password en líneas separadas
+    input_data = username + "\n" + "\n".join(passwords) + "\n"
 
-    code, out, err = run_cmd(BIN_PATH, input_data=f"{test_input}\n")
+    code, out, err = run_cmd(BIN_PATH, input_data=input_data)
 
     if err:
         print("stderr:", err)
 
     assert code == 0, f"{RED}Program execution failed{RESET}"
-    assert expected_output in out, (
+    assert expected in out, (
         f"{RED}Unexpected output (case {iteration}):\n"
-        f"Expected to find:\n{expected_output}\n"
+        f"Expected to find:\n{expected}\n"
         f"Got:\n{out}{RESET}"
     )
 
@@ -78,18 +77,33 @@ def test_code_functionality(test_input: str, iteration: int, expected: str):
 
 if __name__ == "__main__":
     try:
-        testcases = {
-            '?': 'A',
-            '+': 'U',
-            '-': 'S',
-            '&': 'X',
-            'X': '&',
-            '8': 'F'
-        }
+        testcases = [
+            {
+                "username": "adminUser",
+                "passwords": ["admin123"],
+                "expected": "Access granted."
+            },
+            {
+                "username": "shrt",
+                "passwords": ["admin123"],
+                "expected": "Invalid username"  # El programa pedirá de nuevo
+            },
+            {
+                "username": "validName",
+                "passwords": ["wrongpass", "wrong2", "wrong3"],
+                "expected": "Account locked."
+            },
+            {
+                "username": "validName",
+                "passwords": ["passNoDigit", "admin123"],
+                "expected": "Password must contain at least one number."
+            }
+        ]
+
         test_make()
         test_binary_exists()
-        for i, (char, expected) in enumerate(testcases.items()):
-            test_code_functionality(char, i, expected)
+        for i, case in enumerate(testcases):
+            test_code_functionality(case["username"], case["passwords"], i, case["expected"])
         print(f"\n{GREEN}All tests passed{RESET}")
     except AssertionError as e:
         print(f"{RED}Test failed: {e}{RESET}")
