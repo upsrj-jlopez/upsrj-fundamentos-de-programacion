@@ -1,128 +1,226 @@
-# Sistema de Acceso
+# Reloj Digital por Consola – Lista de Requerimientos
 
 ## Objetivo
 
-El objetivo de este ejercicio es reforzar el uso de **estructuras de control repetitivas** y el **manejo básico de cadenas de caracteres en lenguaje C**, mediante la simulación de un sistema simple de inicio de sesión.
+El objetivo de este ejercicio es reforzar el uso de:
 
-Este ejercicio cubre:
+* Variables y tipos de datos básicos  
+* Manejo de cadenas (`char[]`)  
+* Lectura de datos con `scanf`  
+* Conversión de cadenas a valores numéricos (`sscanf`)  
+* Estructuras de control (`if`, `while`)  
+* Modularización de la lógica en funciones  
+* Razonamiento secuencial del tiempo  
 
-* Uso de ciclos `for`, `while` y `do/while`
-* Uso de las palabras clave `break` y `continue`
-* Manejo básico de cadenas de caracteres (`char`)
-* Validación de entrada del usuario
-* Control de flujo en programas secuenciales
-* Comparación de caracteres usando rangos ASCII
-
----
-
-## Instrucciones
-
-1. El programa debe solicitar al usuario un **nombre de usuario**.
-
-2. El nombre de usuario debe cumplir las siguientes condiciones:
-   * Tener una longitud mínima de **5 caracteres**
-   * No estar vacío
-
-3. La validación del nombre de usuario debe realizarse usando un ciclo `do/while`.
-
-4. Una vez ingresado un nombre de usuario válido, el programa debe:
-   * Recorrer el nombre carácter por carácter usando un ciclo `for`
-   * Contar cuántos caracteres **no son espacios**
-   * Usar la palabra clave `continue` para ignorar los espacios
-
-5. Posteriormente, el sistema debe solicitar una **contraseña**, considerando:
-   * Máximo **3 intentos**
-   * El control de intentos debe realizarse con un ciclo `while`
-
-6. Antes de validar la contraseña, el programa debe:
-   * Recorrer la contraseña con un ciclo `for`
-   * Verificar que contenga **al menos un número**
-   * Si no contiene números, el intento se considera fallido
-
-7. Si la contraseña ingresada coincide con la contraseña correcta:
-   * Mostrar el mensaje `"Access granted."`
-   * Salir inmediatamente del ciclo usando `break`
-
-8. Si se alcanzan los 3 intentos fallidos:
-   * Mostrar el mensaje `"Account locked."`
+El programa debe implementar la lógica completa de un reloj digital que **avance manualmente el tiempo**, sin utilizar la hora real del sistema, y respetando las funciones obligatorias.
 
 ---
 
-## Ejemplo
+## Nota sobre `main.c`
 
-Entrada esperada del programa:
+En el archivo `main.c` se incluye:
 
+```c
+#include "./clock.h"
+
+#ifndef UNIT_TEST
+int main() {
+    printf("Hello World!\n");
+    return 0;
+}
+#endif /* UNIT_TEST */
 ```
 
-Enter username (minimum 5 characters): student01
-Enter password: admin123
+- **`#include "./clock.h"`**: este archivo contiene las **declaraciones** de las funciones obligatorias. Garantiza que las firmas sean consistentes y que el compilador pueda verificar que las funciones existen.  
+- **`#ifndef UNIT_TEST`**: este bloque evita que el `main()` se compile cuando se ejecutan las pruebas automáticas. El tester define la macro `UNIT_TEST` al compilar, lo que desactiva el `main()` y permite probar directamente las funciones. En compilación normal, el `main()` sí se incluye y el programa corre en consola.
 
+---
+
+## Nota sobre `clock_stubs.c`
+
+Existe un archivo auxiliar llamado `clock_stubs.c` que define **implementaciones débiles (stubs)** de las funciones obligatorias.  
+- Si las funciones no están implementadas en `main.c`, el linker usa los stubs y el tester marca `[FAIL]`.  
+- Si las funciones sí están implementadas, las definiciones reales reemplazan a los stubs y el tester valida con `assert` y marca `[PASS]`.  
+
+Esto asegura que las pruebas siempre se puedan ejecutar y que el feedback sea claro:  
+- `[FAIL] función not implemented` → aún falta implementarla.  
+- `[PASS]` → la función está correcta.
+
+---
+
+## Funciones obligatorias
+
+El alumno debe implementar **exactamente** las siguientes funciones en `main.c`.  
+Cada sección explica lo que se espera de la función.
+
+---
+
+### 1. `parse_time`
+
+```c
+int parse_time(const char *time_str, int *h, int *m, int *s);
 ```
 
-Salida esperada del programa:
+**Responsabilidad:**  
+- Recibir la cadena ingresada por el usuario en formato `HH:MM:SS`.  
+- Convertirla a valores numéricos (`hour`, `minute`, `second`) usando `sscanf`.  
+- Retornar el número de conversiones exitosas (debe ser 3 si el formato es correcto).  
 
+**Prueba esperada:**  
+- `parse_time("12:34:56", &h, &m, &s)` debe asignar `h=12, m=34, s=56` y retornar `3`.
+
+---
+
+### 2. `validate_time`
+
+```c
+int validate_time(int h, int m, int s);
 ```
 
-Username has 9 non-space characters.
-Access granted.
+**Responsabilidad:**  
+- Verificar que los valores estén dentro de los rangos válidos:  
+  - `hour` entre 0 y 23  
+  - `minute` entre 0 y 59  
+  - `second` entre 0 y 59  
+- Retornar `1` si son válidos, `0` si no lo son.  
 
+**Prueba esperada:**  
+- `validate_time(23,59,59)` → `1`  
+- `validate_time(25,10,10)` → `0`
+
+---
+
+### 3. `print_time`
+
+```c
+void print_time(int h, int m, int s);
 ```
 
-Ejemplo de intento fallido:
+**Responsabilidad:**  
+- Imprimir la hora en consola con el formato:  
 
 ```
+Hora actual: HH:MM:SS
+```
 
-Enter password: test
-Password must contain at least one number.
-Enter password: 123
-Incorrect password.
-Enter password: pass1
-Incorrect password.
-Account locked.
+- Usar `\r` para sobrescribir la misma línea.  
+- Usar `fflush(stdout)` para forzar la salida inmediata.  
 
+**Prueba esperada:**  
+- `print_time(9,5,3)` debe mostrar `Hora actual: 09:05:03`.
+
+---
+
+### 4. `next_second`
+
+```c
+int next_second(int s);
+```
+
+**Responsabilidad:**  
+- Incrementar los segundos en 1.  
+- Si llega a 60, reiniciar a 0.  
+- Retornar el nuevo valor de segundos.  
+
+**Prueba esperada:**  
+- `next_second(58)` → `59`  
+- `next_second(59)` → `0`
+
+---
+
+### 5. `next_minute`
+
+```c
+int next_minute(int m, int s);
+```
+
+**Responsabilidad:**  
+- Incrementar los minutos **solo cuando los segundos vuelven a 0**.  
+- Si llega a 60, reiniciar a 0.  
+- Retornar el nuevo valor de minutos.  
+
+**Prueba esperada:**  
+- `next_minute(10,0)` → `11`  
+- `next_minute(59,0)` → `0`  
+- `next_minute(10,5)` → `10` (no cambia porque segundos ≠ 0)
+
+---
+
+### 6. `next_hour`
+
+```c
+int next_hour(int h, int m, int s);
+```
+
+**Responsabilidad:**  
+- Incrementar las horas **solo cuando minutos y segundos vuelven a 0**.  
+- Si llega a 24, reiniciar a 0.  
+- Retornar el nuevo valor de horas.  
+
+**Prueba esperada:**  
+- `next_hour(10,0,0)` → `11`  
+- `next_hour(23,0,0)` → `0`  
+- `next_hour(10,5,0)` → `10` (no cambia porque minutos ≠ 0)
+
+---
+
+## Librerías obligatorias
+
+```c
+#include <stdio.h>
+#include <unistd.h>
 ```
 
 ---
 
-## Notas
+## Defines obligatorios
 
-* Todo el programa debe implementarse **dentro de la función `main`**.
-* No se permite el uso de funciones definidas por el usuario.
-* No se permite el uso de punteros explícitos.
-* El uso de arreglos está limitado únicamente al almacenamiento de las cadenas de entrada.
-* No se deben utilizar estructuras, memoria dinámica ni librerías avanzadas.
-* El objetivo es reforzar **control de flujo**, no seguridad real.
+```c
+#define MAX_HOUR    23
+#define MAX_MINUTE 59
+#define MAX_SECOND 59
 
----
-
-## Metas de Aprendizaje
-
-* Comprender cuándo y por qué usar `for`, `while` y `do/while`.
-* Aplicar correctamente `break` para salir de un ciclo.
-* Aplicar correctamente `continue` para saltar iteraciones.
-* Manipular cadenas de caracteres básicas en C.
-* Analizar y validar datos ingresados por el usuario.
-* Desarrollar programas con flujo lógico claro y legible.
-
-Al finalizar el ejercicio, el estudiante debe ser capaz de **explicar el comportamiento de cada ciclo** y **justificar el uso de `break` y `continue`** dentro del programa.
-
----
-
-## Archivos esperados
-
-* `main.c`: Todo el código del programa debe estar contenido en este archivo.
-
----
-
-## Compilación y ejecución
-
-Usa las macros de Visual Studio Code.
-
+#define TIME_STR_LEN 9
 ```
 
-CTRL + SHIFT + B
+---
 
+## Variables obligatorias
+
+```c
+int hour;
+int minute;
+int second;
+
+char time_str[TIME_STR_LEN];
 ```
+
+---
+
+## Flujo General del Programa
+
+1. Solicitar la hora inicial al usuario  
+2. Validar formato y rango de valores con `parse_time()` y `validate_time()`  
+3. Mostrar la hora actual con `print_time()`  
+4. Esperar un segundo con `sleep(1)`  
+5. Actualizar el tiempo con `next_second()`, `next_minute()`, `next_hour()`  
+6. Repetir indefinidamente  
+
+---
+
+## Restricciones Generales
+
+* Todo el código debe estar en `main.c`  
+* No se permite usar punteros en la lógica del reloj (solo en `parse_time`)  
+* No se permite usar arreglos dinámicos  
+* No se permite obtener la hora del sistema  
+* No se permite usar librerías adicionales  
+
+---
+
+## Nota Final
+
+Este ejercicio no busca crear un reloj preciso, sino desarrollar la capacidad de **razonar sistemas secuenciales**, practicar el manejo de strings y comprender el control del tiempo en C.  
 
 ---
 

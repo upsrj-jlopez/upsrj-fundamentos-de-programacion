@@ -4,40 +4,38 @@ import os
 import sys
 import re
 
-# ANSI escape codes for colors
 GREEN = "\033[92m"
 RED   = "\033[91m"
 BLUE  = "\033[34m"
 RESET = "\033[0m"
 
-# Paths
 SRC_DIR = "src"
 FILENAME = "main"
 BIN_PATH = os.path.join("build", "bin", FILENAME)
-OBJ_PATH = os.path.join("build", "obj", f"{FILENAME}.obj")
-LOG_PATH = os.path.join("build", "log", f"{FILENAME}.log")
 
-def run_cmd(cmd, cwd=None, input_data=None):
-    """Run a shell command and return (exit_code, stdout, stderr)."""
+def run_cmd(cmd, cwd=None, input_data=None, timeout=3):
     try:
         result = subprocess.run(
             cmd,
-            cwd=cwd,
-            shell=True,
+            cwd=cwd,         
             input=input_data,
             capture_output=True,
-            text=True
+            text=True,
+            timeout=timeout
         )
         return result.returncode, result.stdout, result.stderr
-    except Exception as e:
-        return 1, "", str(e)
+    except subprocess.TimeoutExpired as e:
+        # El reloj sigue corriendo, pero capturamos lo que imprimió
+        stdout = e.stdout.decode() if isinstance(e.stdout, bytes) else (e.stdout or "")
+        stderr = e.stderr.decode() if isinstance(e.stderr, bytes) else (e.stderr or "")
+        return 0, stdout, stderr
 
 def test_make():
-    print(">>> Testing compilation with make clean all run-save...")
-    code, out, err = run_cmd("make clean all", cwd=SRC_DIR)
+    print(">>> Testing compilation with make clean all...")
+    code, out, err = run_cmd(["make", "clean", "all"], cwd=SRC_DIR, timeout=10)
     if err:
         print("stderr:", err)
-    assert code == 0, f"{RED}Compilation or run-save failed{RESET}"
+    assert code == 0, f"{RED}Compilation failed{RESET}"
     print(f"{GREEN}Compilation OK{RESET}")
 
 def test_binary_exists():
@@ -45,65 +43,52 @@ def test_binary_exists():
     assert os.path.isfile(BIN_PATH), f"{RED}Binary not found at {BIN_PATH}{RESET}"
     print(f"{GREEN}Binary found: {BIN_PATH}{RESET}")
 
-def test_log_exists_and_content():
-    print(">>> Checking if log file exists and has content...")
-    assert os.path.isfile(LOG_PATH), f"{RED}Log file not found at {LOG_PATH}{RESET}"
-    with open(LOG_PATH, "r") as f:
-        content = f.read().strip()
-    assert content, f"{RED}Log file is empty{RESET}"
-    print(f"{GREEN}Log file OK{RESET}")
-    print(f"{BLUE}Log content:\n{content}{RESET}")
-
-def test_code_functionality(username: str, passwords: list, iteration: int, expected: str):
-    """Black-box test: simulate interactive input (username + password attempts)."""
+def test_code_functionality(initial_time: str, iteration: int, expected_pattern: str):
     print(f">>> Testing program functionality — case {iteration}")
+    input_data = initial_time + "\n"
 
-    # Construimos la entrada: username + cada password en líneas separadas
-    input_data = username + "\n" + "\n".join(passwords) + "\n"
-
-    code, out, err = run_cmd(BIN_PATH, input_data=input_data)
+    code, out, err = run_cmd(BIN_PATH, input_data=input_data, timeout=3)
 
     if err:
         print("stderr:", err)
 
     assert code == 0, f"{RED}Program execution failed{RESET}"
-    assert expected in out, (
+
+    # Verificamos que la salida contiene al menos la hora inicial
+    match = re.search(expected_pattern, out)
+    assert match, (
         f"{RED}Unexpected output (case {iteration}):\n"
-        f"Expected to find:\n{expected}\n"
+        f"Expected to match regex:\n{expected_pattern}\n"
         f"Got:\n{out}{RESET}"
     )
 
     print(f"{GREEN}Case {iteration} OK{RESET}")
+    
+    clean_out = out.replace("\r", "\n").strip()
+    print(f"{BLUE}Captured output:\n{clean_out}{RESET}")
+
 
 if __name__ == "__main__":
     try:
         testcases = [
             {
-                "username": "adminUser",
-                "passwords": ["admin123"],
-                "expected": "Access granted."
+                "initial_time": "09:45:12", 
+                "expected": r"Hora actual: 09:45:12"
             },
             {
-                "username": "shrt",
-                "passwords": ["admin123"],
-                "expected": "Invalid username"  # El programa pedirá de nuevo
+                "initial_time": "23:59:59", 
+                "expected": r"Hora actual: 23:59:59"
             },
             {
-                "username": "validName",
-                "passwords": ["wrongpass", "wrong2", "wrong3"],
-                "expected": "Account locked."
+                "initial_time": "00:00:00", 
+                "expected": r"Hora actual: 00:00:00"
             },
-            {
-                "username": "validName",
-                "passwords": ["passNoDigit", "admin123"],
-                "expected": "Password must contain at least one number."
-            }
         ]
 
         test_make()
         test_binary_exists()
         for i, case in enumerate(testcases):
-            test_code_functionality(case["username"], case["passwords"], i, case["expected"])
+            test_code_functionality(case["initial_time"], i, case["expected"])
         print(f"\n{GREEN}All tests passed{RESET}")
     except AssertionError as e:
         print(f"{RED}Test failed: {e}{RESET}")
