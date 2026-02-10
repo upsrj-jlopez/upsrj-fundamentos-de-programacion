@@ -208,6 +208,53 @@ char time_str[TIME_STR_LEN];
 
 ---
 
+## Entradas y Salidas Esperadas
+
+### Interfaz del Programa
+- **Formato:** mensaje de explicación de uso para el usuario `Introduzca la hora en formato HH:MM:SS`.
+
+### Entrada del Programa
+- **Formato:** cadena en consola con la hora inicial en formato `HH:MM:SS`.
+- **Ejemplo válido:**  
+  ```
+  12:34:56
+  ```
+- **Ejemplo inválido:**  
+  ```
+  99:12:00
+  ```
+
+### Salida del Programa
+- **Formato:** impresión continua en consola de la hora actual, actualizada cada segundo.  
+- **Ejemplo:**  
+  ```
+  Hora actual: 12:34:56
+  Hora actual: 12:34:57
+  Hora actual: 12:34:58
+  ...
+  ```
+
+---
+
+### Entradas y Salidas por Función
+
+| Función | Entrada | Salida esperada |
+|---------|---------|-----------------|
+| `parse_time(const char *time_str, int *h, int *m, int *s)` | `"12:34:56"` | Retorna `3`, asigna `h=12, m=34, s=56` |
+| `validate_time(int h, int m, int s)` | `(23,59,59)` | `1` (válido) |
+| | `(25,10,10)` | `0` (inválido) |
+| `print_time(int h, int m, int s)` | `(9,5,3)` | Imprime `Hora actual: 09:05:03` |
+| `next_second(int s)` | `58` | `59` |
+| | `59` | `0` |
+| `next_minute(int m, int s)` | `(10,59)` | `11` |
+| | `(59,59)` | `0` |
+| | `(10,5)` | `10` (sin cambio) |
+| `next_hour(int h, int m, int s)` | `(10,59,59)` | `11` |
+| | `(23,59,59)` | `0` |
+| | `(10,5,0)` | `10` (sin cambio) |
+
+---
+
 ## Restricciones Generales
 
 * Todo el código debe estar en `main.c`  
