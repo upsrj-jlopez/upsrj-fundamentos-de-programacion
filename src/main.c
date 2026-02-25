@@ -9,7 +9,6 @@
  */
 char* lowercase(char* input)
 {
-    char* output = input;
     /** 
      * TODO:
      *  Implement the algorithm here.
@@ -18,7 +17,7 @@ char* lowercase(char* input)
      *  - Convert to lowercase manually
      */ 
 
-    return output;
+    return input;
 }
 
 int main(void)
