@@ -2,54 +2,18 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build and Run",
+            "label": "Build, Run & Tests",
             "type": "shell",
-            "command": "make",
+            "command": "pytest",
             "args": [
-                "clean",
-                "all",
-                "run"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/src"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Run Black Box Testing",
-            "type": "shell",
-            "command": "python",
-            "args": [
-                "test/test_main.py"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Run Unit Testing",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "clean",
-                "all"
+                "-q",
+                "--tb=short",
+                "--disable-warnings"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/test"
             },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "problemMatcher": []
         }
     ]
