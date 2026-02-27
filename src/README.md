@@ -1,10 +1,10 @@
-# Conversión de texto a minúsculas
+# Conversión de texto a mayúsculas
 
 ---
 
 ## Objetivo
 
-Implementar una función llamada `lowercase` que reciba un string como entrada y retorne una nueva cadena donde todos los caracteres alfabéticos estén convertidos a minúsculas.
+Implementar una función llamada `uppercase` que reciba un string como entrada y retorne una nueva cadena donde todos los caracteres alfabéticos estén convertidos a mayúsculas.
 
 Este ejercicio tiene como finalidad reforzar los siguientes conceptos fundamentales:
 
@@ -20,12 +20,12 @@ Este ejercicio tiene como finalidad reforzar los siguientes conceptos fundamenta
 
 ## Planteamiento del Problema
 
-Se requiere desarrollar una función que transforme únicamente los caracteres alfabéticos mayúsculos (`A-Z`) en su equivalente en minúscula (`a-z`).
+Se requiere desarrollar una función que transforme únicamente los caracteres alfabéticos minúsculas (`a-z`) en su equivalente en mayúsculas (`A-Z`).
 
 La función **NO debe utilizar funciones de librería** como:
 
-* `tolower()`
-* `strlwr()`
+* `toupper()`
+* `strupr()`
 * Funciones equivalentes del lenguaje
 
 ---
@@ -69,7 +69,7 @@ return input
 
 ### Condiciones de salida:
 
-1. Todos los caracteres `A-Z` deben convertirse a `a-z`
+1. Todos los caracteres `a-z` deben convertirse a `A-Z`
 2. Los demás caracteres deben permanecer sin modificación
 3. El string resultante debe estar correctamente terminado en `'\0'`
 4. No debe modificar memoria fuera del rango del string
@@ -78,7 +78,7 @@ return input
 
 ## Reglas de Implementación
 
-Desarrolla una función que implemente la conversión de mayúsculas a minúsculas de carácteres de tipo ASCII.
+Desarrolla una función que implemente la conversión de minúsculas a mayúsculas de carácteres de tipo ASCII.
 
 Puedes utilizar:
 
@@ -104,10 +104,10 @@ La función debe cumplir estrictamente el contrato.
 
 | Entrada      | Salida Esperada |
 | ------------ | --------------- |
-| `"HELLO"`    | `"hello"`       |
-| `"Hello123"` | `"hello123"`    |
-| `"already"`  | `"already"`     |
-| `"PiZzA"`    | `"pizza"`       |
+| `"hello"`    | `"HELLO"`       |
+| `"Hello123"` | `"HELLO123"`    |
+| `"ALREADY"`  | `"ALREADY"`     |
+| `"PiZzA"`    | `"PIZZA"`       |
 | `"12345"`    | `"12345"`       |
 
 ---
@@ -118,19 +118,19 @@ Recibes el siguiente archivo base, solo debes implementar la lógica dentro del 
 
 ```c
 /**
- * @brief uppercase ASCII characters to lowercase.
+ * @brief lowercase ASCII characters to uppercase.
  *
  * @param input: pointer to null-terminated string
  * @return pointer to transformed string
  */
-char* lowercase(char* input)
+char* uppercase(char* input)
 {
     /** 
      * TODO:
      *  Implement the algorithm here.
      *  - Iterate over the string
-     *  - Detect uppercase letters
-     *  - Convert to lowercase manually
+     *  - Detect lowercase letters
+     *  - Convert to uppercase manually
      */ 
 
     return input;
