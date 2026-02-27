@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Unit tests for lowercase function.
+Unit tests for uppercase function.
 
 This test suite:
 - Compiles the project using Make with -DUNIT_TEST flag
 - Executes the generated binary
-- Validates functional behavior of lowercase conversion
+- Validates functional behavior of uppercase conversion
 - Generates execution log file
 - Uses pytest fixtures and parametrization
 
@@ -113,17 +113,17 @@ def build_project():
 @pytest.mark.parametrize(
     "input_text, expected_output",
     [
-        ("HELLO", "hello"),
-        ("Hello123", "hello123"),
-        ("already", "already"),
-        ("PiZzA", "pizza"),
+        ("hello", "HELLO"),
+        ("Hello123", "HELLO123"),
+        ("ALREADY", "ALREADY"),
+        ("PiZzA", "PIZZA"),
         ("12345", "12345"),
         ("", ""),
     ],
 )
-def test_lowercase(build_project, input_text, expected_output):
+def test_uppercase(build_project, input_text, expected_output):
     """
-    Validate lowercase conversion behavior.
+    Validate uppercase conversion behavior.
 
     The test:
     - Sends input string to program stdin
