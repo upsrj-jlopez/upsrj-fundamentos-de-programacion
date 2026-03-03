@@ -1,17 +1,18 @@
 # Makefile located inside src/
-# Compiles main.c into object files and final binary
+# Compiles sources into object files and final binary
 # Generates ../build/bin, ../build/obj, and ../build/log
 
 CC      := gcc
 CFLAGS  ?= -Wall -O2 -Wno-unused-result
-SRC     := main.c
+SRC     := main.c fhndlr.c
 OBJ_DIR := ../build/obj
 BIN_DIR := ../build/bin
 LOG_DIR := ../build/log
+OUT_DIR := ../build/out
 
 FILENAME := main
 TARGET   := $(BIN_DIR)/$(FILENAME)
-OBJS     := $(OBJ_DIR)/$(FILENAME).o
+OBJS     := $(SRC:%.c=$(OBJ_DIR)/%.o)
 LOGS     := $(LOG_DIR)/$(FILENAME).log
 
 # Default rule: build the executable
@@ -31,13 +32,15 @@ $(OBJ_DIR)/%.o: %.c
 
 # Run the program
 run: $(TARGET)
+	@mkdir -p $(OUT_DIR)
 	@$(TARGET)
+	@echo "Program executed, outputs in $(OUT_DIR)"
 
 # Run the program and save output to a .log file in build/log
 run-save: $(TARGET)
-	@mkdir -p $(LOG_DIR)
+	@mkdir -p $(LOG_DIR) $(OUT_DIR)
 	@$(TARGET) | tee $(LOGS)
-	@echo "Output saved to $(LOGS)"
+	@echo "Output saved to $(LOGS), outputs in $(OUT_DIR)"
 
 # Clean up build directories
 clean:

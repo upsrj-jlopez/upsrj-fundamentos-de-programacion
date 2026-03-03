@@ -57,5 +57,10 @@ dkms.conf
 **/bin
 **/obj
 **/log
+**/out
+
 *.pytest_cache
 *__pycache__
+
+inputs/*
+!inputs/lorem.txt
