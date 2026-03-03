@@ -57,6 +57,8 @@ dkms.conf
 **/bin
 **/obj
 **/log
+**/out
+
 *.pytest_cache
 *__pycache__
 
