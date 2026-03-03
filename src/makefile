@@ -1,17 +1,17 @@
 # Makefile located inside src/
-# Compiles main.c into object files and final binary
+# Compiles sources into object files and final binary
 # Generates ../build/bin, ../build/obj, and ../build/log
 
 CC      := gcc
 CFLAGS  ?= -Wall -O2 -Wno-unused-result
-SRC     := main.c
+SRC     := main.c fhndlr.c
 OBJ_DIR := ../build/obj
 BIN_DIR := ../build/bin
 LOG_DIR := ../build/log
 
 FILENAME := main
 TARGET   := $(BIN_DIR)/$(FILENAME)
-OBJS     := $(OBJ_DIR)/$(FILENAME).o
+OBJS     := $(SRC:%.c=$(OBJ_DIR)/%.o)
 LOGS     := $(LOG_DIR)/$(FILENAME).log
 
 # Default rule: build the executable

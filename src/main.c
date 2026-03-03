@@ -1,54 +1,72 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
+#include "fhndlr.h"
 
-/**
- * @brief lowercase ASCII characters to uppercase.
- *
- * @param input: pointer to null-terminated string
- * @return pointer to transformed string
- */
-char* uppercase(char* input)
-{
-    /** 
-     * TODO:
-     *  Implement the algorithm here.
-     *  - Iterate over the string
-     *  - Detect lowercase letters
-     *  - Convert to uppercase manually
-     */ 
+#define INPUT_FILE        "../inputs/lorem.txt"
+#define LOWER_OUTPUT_FILE "../inputs/lower.txt"
+#define UPPER_OUTPUT_FILE "../inputs/upper.txt"
+#define CAPTL_OUTPUT_FILE "../inputs/capitalize.txt"
 
-    return input;
-}
+int main(void) {
 
-int main(void)
-{
-#ifdef UNIT_TEST
-
-    /* Test mode: read input from stdin */
-    char buffer[256];
-
-    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
-    {
+    /* Reads input file content */
+    FILE* input = fopen(INPUT_FILE, "r");
+    
+    if (input == NULL) {
+        perror("unable to read file.");
         return 1;
     }
 
-    /* Remove trailing newline if present */
-    buffer[strcspn(buffer, "\n")] = '\0';
+    /* Reads lower output file content */
+    FILE* lower_output = fopen(LOWER_OUTPUT_FILE, "w");
 
-    char* result = uppercase(buffer);
+    if (lower_output == NULL) {
+        perror("unable to open lower output file");
+        fclose(input);
+        return 1;
+    }
 
-    printf("%s", result);
+    /* Reads upper output file content */
+    FILE* upper_output = fopen(UPPER_OUTPUT_FILE, "w");
 
-#else
+    if (upper_output == NULL) {
+        perror("unable to open upper output file");
+        fclose(input);
+        fclose(lower_output);
+        return 1;
+    }
 
-    /* Normal execution mode */
-    char text[] = "HELLO World 123!";
+    /* Reads capitalized output file content */
+    FILE* captl_output = fopen(CAPTL_OUTPUT_FILE, "w");
 
-    char* result = uppercase(text);
+    if (captl_output == NULL) {
+        perror("unable to open capitalize output file");
+        fclose(input);
+        fclose(lower_output);
+        fclose(upper_output);
+        return 1;
+    }
 
-    printf("Result: %s\n", result);
+    /* Data buffer for file content manipulation */
+    char buffer[1024];  
 
-#endif
+    while (fgets(buffer, sizeof(buffer), input) != NULL) {
+        
+        lowercase(buffer);
+        fputs(buffer, lower_output);
+
+        uppercase(buffer);
+        fputs(buffer, upper_output);
+
+        capitalize(buffer);
+        fputs(buffer, captl_output);
+    }
+
+    /* Close files (Important to avoid memory leaks) */
+    fclose(input);
+    fclose(lower_output);
+    fclose(upper_output);
+    fclose(captl_output);
 
     return 0;
 }
