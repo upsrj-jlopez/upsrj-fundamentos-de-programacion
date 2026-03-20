@@ -1,17 +1,18 @@
+#include <stdio.h>
 #include "fhndlr.h"
 
-char* lowercase(char* input)
+void grayscale(unsigned char* pixel)
 {
-    return input;
-}
+    unsigned char blue  = pixel[0];
+    unsigned char green = pixel[1];
+    unsigned char red   = pixel[2];
+    unsigned char gray;
 
+    /* Convert to grayscale */
+    gray = (unsigned char)((red + green + blue) / 3);
 
-char* uppercase(char* input)
-{
-    return input;
-}
-
-char* capitalize(char* input)
-{
-    return input;
+    /* Assign grayscale value */
+    pixel[0] = gray;
+    pixel[1] = gray;
+    pixel[2] = gray;
 }
