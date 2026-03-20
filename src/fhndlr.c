@@ -1,17 +1,7 @@
+#include <stdio.h>
 #include "fhndlr.h"
 
-char* lowercase(char* input)
+void grayscale(unsigned char* pixel)
 {
-    return input;
-}
-
-
-char* uppercase(char* input)
-{
-    return input;
-}
-
-char* capitalize(char* input)
-{
-    return input;
+    void;
 }

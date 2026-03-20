@@ -2,27 +2,11 @@
 #define FHNDLR_H
 
 /**
- * @brief uppercase ASCII characters to lowercase.
+ * @brief Converts a BGR pixel to grayscale.
  *
- * @param input: pointer to null-terminated string
- * @return pointer to transformed string
+ * @param pixel: pointer to 3-byte pixel (Blue, Green, Red)
+ * @return void
  */
-char* lowercase(char* input); 
-
-/**
- * @brief lowercase ASCII characters to uppercase.
- *
- * @param input: pointer to null-terminated string
- * @return pointer to transformed string
- */
-char* uppercase(char* input);
-
-/**
- * @brief ASCII characters capitalization.
- *
- * @param input: pointer to null-terminated string
- * @return pointer to transformed string
- */
-char* capitalize(char* input);
+void grayscale(unsigned char* pixel);
 
 #endif

@@ -16,21 +16,9 @@ OUT_DIR   = os.path.join(BUILD_DIR, "out")
 FILENAME = "main"
 BIN_PATH = os.path.join(BUILD_DIR, "bin", FILENAME)
 
-def c_capitalize(text: str) -> str:
-    text = text.lower()
-    result = []
-    capitalize = True
-    for ch in text:
-        if ch in [' ', '\n', '\t']:
-            capitalize = True
-            result.append(ch)
-        else:
-            if capitalize and 'a' <= ch <= 'z':
-                result.append(chr(ord(ch) - (ord('a') - ord('A'))))
-            else:
-                result.append(ch)
-            capitalize = False
-    return "".join(result)
+HEADER_SIZE = 54
+PIXEL_SIZE = 3
+
 
 def write_log(message):
     os.makedirs(LOG_DIR, exist_ok=True)
@@ -59,28 +47,74 @@ def build_and_run():
 
 @pytest.fixture(scope="session")
 def expected_contents():
-    """Genera los contenidos esperados a partir de lorem.txt"""
-    path = os.path.join(INPUT_DIR, "lorem.txt")
-    with open(path, "r", encoding="utf-8") as f:
-        base_text = f.read()
+    """Generates expected grayscale BMP from lena.bmp"""
+
+    path = os.path.join(INPUT_DIR, "lena.bmp")
+
+    with open(path, "rb") as f:
+        data = f.read()
+
+    header = data[:HEADER_SIZE]
+    pixels = data[HEADER_SIZE:]
+
+    result = bytearray()
+
+    # Process pixels in groups of 3 (BGR)
+    for i in range(0, len(pixels), PIXEL_SIZE):
+        if i + 2 >= len(pixels):
+            break
+
+        blue  = pixels[i]
+        green = pixels[i + 1]
+        red   = pixels[i + 2]
+
+        gray = (blue + green + red) // 3
+
+        result.extend([gray, gray, gray])
 
     return {
-        "upper.txt": base_text.upper(),
-        "lower.txt": base_text.lower(),
-        "capitalize.txt": c_capitalize(base_text),
+        "lena.bmp": header + bytes(result)
     }
 
 
 @pytest.mark.parametrize(
     "fname",
-    ["upper.txt", "lower.txt", "capitalize.txt"]
+    ["lena.bmp"]
+)
+def test_header_preserved(expected_contents, fname):
+    """Valida que el header del BMP no sea modificado"""
+    
+    in_path = os.path.join(INPUT_DIR, fname)
+    out_path = os.path.join(OUT_DIR, fname)
+
+    assert os.path.isfile(out_path), f"Archivo no generado: {out_path}"
+
+    with open(in_path, "rb") as f:
+        original = f.read(HEADER_SIZE)
+
+    with open(out_path, "rb") as f:
+        result = f.read(HEADER_SIZE)
+
+    if result == original:
+        write_log(f"PASS: HEADER {fname}")
+    else:
+        write_log(f"FAIL: HEADER {fname} | Header was modified")
+
+    assert result == original, (
+        f"\nHeader mismatch in {fname}\n"
+    )
+
+
+@pytest.mark.parametrize(
+    "fname",
+    ["lena.bmp"]
 )
 def test_generated_files(expected_contents, fname):
     """Compara los archivos generados en C con los esperados en Python"""
     out_path = os.path.join(OUT_DIR, fname)
     assert os.path.isfile(out_path), f"Archivo no generado: {out_path}"
 
-    with open(out_path, "r", encoding="utf-8") as f:
+    with open(out_path, "rb") as f:
         result = f.read()
 
     expected = expected_contents[fname]
@@ -92,6 +126,4 @@ def test_generated_files(expected_contents, fname):
 
     assert result == expected, (
         f"\nMismatch in {fname}:\n"
-        f"Expected:\n{expected[:200]}...\n"
-        f"Got:\n{result[:200]}..."
     )
