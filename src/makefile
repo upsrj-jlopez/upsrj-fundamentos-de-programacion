@@ -4,7 +4,7 @@
 
 CC      := gcc
 CFLAGS  ?= -Wall -O2 -Wno-unused-result
-SRC     := main.c fhndlr.c
+SRC     := main.c
 OBJ_DIR := ../build/obj
 BIN_DIR := ../build/bin
 LOG_DIR := ../build/log

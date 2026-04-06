@@ -16,9 +16,14 @@ OUT_DIR   = os.path.join(BUILD_DIR, "out")
 FILENAME = "main"
 BIN_PATH = os.path.join(BUILD_DIR, "bin", FILENAME)
 
-HEADER_SIZE = 54
-PIXEL_SIZE = 3
-
+EXPECTED_HEX = (
+    "20202020202a20202020200a"
+    "202020202a2a2a202020200a"
+    "2020202a2a2a2a2a2020200a"
+    "20202a2a2a2a2a2a2a20200a"
+    "202a2a2a2a2a2a2a2a2a200a"
+    "2a2a2a2a2a2a2a2a2a2a2a0a"
+)
 
 def write_log(message):
     os.makedirs(LOG_DIR, exist_ok=True)
@@ -47,67 +52,18 @@ def build_and_run():
 
 @pytest.fixture(scope="session")
 def expected_contents():
-    """Generates expected grayscale BMP from lena.bmp"""
+    """Generates expected pyramid.txt"""
 
-    path = os.path.join(INPUT_DIR, "lena.bmp")
-
-    with open(path, "rb") as f:
-        data = f.read()
-
-    header = data[:HEADER_SIZE]
-    pixels = data[HEADER_SIZE:]
-
-    result = bytearray()
-
-    # Process pixels in groups of 3 (BGR)
-    for i in range(0, len(pixels), PIXEL_SIZE):
-        if i + 2 >= len(pixels):
-            break
-
-        blue  = pixels[i]
-        green = pixels[i + 1]
-        red   = pixels[i + 2]
-
-        gray = (blue + green + red) // 3
-
-        result.extend([gray, gray, gray])
+    expected_bytes = bytes.fromhex(EXPECTED_HEX)
 
     return {
-        "lena.bmp": header + bytes(result)
+        "pyramid.txt": expected_bytes
     }
 
 
 @pytest.mark.parametrize(
     "fname",
-    ["lena.bmp"]
-)
-def test_header_preserved(expected_contents, fname):
-    """Valida que el header del BMP no sea modificado"""
-    
-    in_path = os.path.join(INPUT_DIR, fname)
-    out_path = os.path.join(OUT_DIR, fname)
-
-    assert os.path.isfile(out_path), f"Archivo no generado: {out_path}"
-
-    with open(in_path, "rb") as f:
-        original = f.read(HEADER_SIZE)
-
-    with open(out_path, "rb") as f:
-        result = f.read(HEADER_SIZE)
-
-    if result == original:
-        write_log(f"PASS: HEADER {fname}")
-    else:
-        write_log(f"FAIL: HEADER {fname} | Header was modified")
-
-    assert result == original, (
-        f"\nHeader mismatch in {fname}\n"
-    )
-
-
-@pytest.mark.parametrize(
-    "fname",
-    ["lena.bmp"]
+    ["pyramid.txt"]
 )
 def test_generated_files(expected_contents, fname):
     """Compara los archivos generados en C con los esperados en Python"""
@@ -122,8 +78,14 @@ def test_generated_files(expected_contents, fname):
     if result == expected:
         write_log(f"PASS: {fname}")
     else:
-        write_log(f"FAIL: {fname} | Expected vs Got differ")
+        write_log(
+            f"FAIL: {fname} | Expected vs Got differ\n"
+            f"--- Expected (str) ---\n{expected.decode('utf-8')}\n"
+            f"--- Got (str) ---\n{result.decode('utf-8')}\n"
+        )
 
     assert result == expected, (
         f"\nMismatch in {fname}:\n"
+        f"--- Expected (str) ---\n{expected.decode('utf-8')}\n"
+        f"--- Got (str) ---\n{result.decode('utf-8')}\n"
     )
